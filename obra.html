@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obra · Els Bosch</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">Els Bosch</a>
+    <ul class="nav-links">
+      <li><a href="galeria.html" class="actiu">Col·lecció Pilà Masó</a></li>
+      <li><a href="#">Història</a></li>
+      <li><a href="#">Família</a></li>
+    </ul>
+    <div class="nav-dreta" id="nav-dreta"></div>
+  </nav>
+
+  <div id="spinner" class="spinner"></div>
+
+  <div class="obra-container" id="obra-container" style="display:none;">
+
+    <div class="obra-imatge-zona">
+      <img id="obra-img" src="" alt="" />
+    </div>
+
+    <div class="obra-info">
+      <p class="etiqueta">Col·lecció Pilà Masó</p>
+      <h1 id="obra-titol"></h1>
+
+      <div class="obra-metadades">
+        <div class="obra-metadada" id="meta-any" style="display:none;">
+          <label>Any</label>
+          <span id="obra-any"></span>
+        </div>
+        <div class="obra-metadada" id="meta-tecnica" style="display:none;">
+          <label>Tècnica</label>
+          <span id="obra-tecnica"></span>
+        </div>
+        <div class="obra-metadada" id="meta-dimensions" style="display:none;">
+          <label>Dimensions</label>
+          <span id="obra-dimensions"></span>
+        </div>
+        <div class="obra-metadada" id="meta-propietat" style="display:none;">
+          <label>Propietat</label>
+          <span id="obra-propietat"></span>
+        </div>
+      </div>
+
+      <p class="obra-descripcio" id="obra-descripcio"></p>
+
+      <div id="btn-editar-zona" style="display:none;">
+        <button class="btn-editar" onclick="editarObra()">Editar obra</button>
+      </div>
+
+      <div class="obra-nav">
+        <a href="#" id="obra-anterior">← Anterior</a>
+        <a href="galeria.html">Tornar a la col·lecció</a>
+        <a href="#" id="obra-seguent">Següent →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>const supabaseJs = supabase; </script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/obra.js"></script>
+  <script>
+    requirirLogin().then(ok => {
+      if (!ok) return;
+      inicialitzarNav();
+      carregarObra();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Els Bosch</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">Els Bosch</a>
+    <ul class="nav-links">
+      <li><a href="galeria.html">Col·lecció Pilà Masó</a></li>
+      <li><a href="#">Història</a></li>
+      <li><a href="#">Família</a></li>
+    </ul>
+    <div class="nav-dreta" id="nav-dreta">
+      <a href="login.html" class="btn-nav">Accedir</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <p class="hero-etiqueta">Família · Memòria · Patrimoni</p>
+      <h1>El llegat<br>dels Bosch</h1>
+      <div style="width:40px;height:1px;background:#1a1a1a;margin:1.5rem 0;"></div>
+      <p>Un espai per conservar i compartir la memòria, l'art i la història de la família Bosch.</p>
+    </section>
+
+    <div class="seccions-grid">
+      <a class="seccio-item" href="galeria.html">
+        <p class="num">01</p>
+        <h2>Col·lecció Pilà Masó</h2>
+        <p>Les pintures de l'àvia Pilà Masó. Oli, aquarel·la i guaix. Una vida dedicada a l'art.</p>
+      </a>
+      <a class="seccio-item" href="#">
+        <p class="num">02</p>
+        <h2>Història familiar</h2>
+        <p>Els orígens, les branques, les històries que passen de generació en generació.</p>
+      </a>
+      <a class="seccio-item" href="#">
+        <p class="num">03</p>
+        <h2>Arxiu fotogràfic</h2>
+        <p>Fotografies i documents de la família al llarg dels anys.</p>
+      </a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>const supabaseJs = supabase; </script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    inicialitzarNav();
+  </script>
+</body>
+</html>

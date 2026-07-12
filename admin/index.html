@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Els Bosch</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="../index.html">Els Bosch</a>
+    <ul class="nav-links">
+      <li><a href="../galeria.html">← Tornar a la web</a></li>
+    </ul>
+    <div class="nav-dreta" id="nav-dreta"></div>
+  </nav>
+
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar">
+      <h2>Administració</h2>
+      <button class="sidebar-link actiu" onclick="mostrarPanell('afegir')">Afegir pintura</button>
+      <button class="sidebar-link" onclick="mostrarPanell('pintures')">Gestionar pintures</button>
+      <button class="sidebar-link" id="link-usuaris" onclick="mostrarPanell('usuaris')" style="display:none;">Usuaris</button>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- PANELL: AFEGIR PINTURA -->
+      <div id="panell-afegir">
+        <h2>Afegir nova pintura</h2>
+        <div id="msg-afegir"></div>
+
+        <div class="form-grup">
+          <label>Imatge de la pintura *</label>
+          <div class="zona-upload" id="zona-upload" onclick="document.getElementById('input-imatge').click()">
+            <p>Clica per seleccionar la imatge</p>
+            <p class="hint">JPG, PNG — màxim 10 MB</p>
+            <img id="preview-img" class="upload-preview" style="display:none;" />
+          </div>
+          <input type="file" id="input-imatge" accept="image/*" style="display:none;" onchange="previsualitzar(this)" />
+        </div>
+
+        <div class="form-grup">
+          <label>Títol *</label>
+          <input type="text" id="titol" placeholder="p.ex. La masia de l'Empordà" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-grup">
+            <label>Any</label>
+            <input type="text" id="any-obra" placeholder="p.ex. 1978" />
+          </div>
+          <div class="form-grup">
+            <label>Tècnica</label>
+            <select id="tecnica">
+              <option value="">— Selecciona —</option>
+              <option value="oli">Oli sobre tela</option>
+              <option value="aquarella">Aquarel·la</option>
+              <option value="guaix">Guaix</option>
+              <option value="dibuix">Dibuix</option>
+              <option value="altres">Altres</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grup">
+          <label>Dimensions</label>
+          <input type="text" id="dimensions" placeholder="p.ex. 60 × 80 cm" />
+        </div>
+
+        <div class="form-grup">
+          <label>Propietat actual</label>
+          <input type="text" id="propietat" placeholder="p.ex. Col·lecció Roger Bosch" />
+        </div>
+
+        <div class="form-grup">
+          <label>Descripció</label>
+          <textarea id="descripcio" placeholder="Història, context, anècdotes sobre aquesta obra..."></textarea>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:center;">
+          <button class="btn-primari" id="btn-guardar" onclick="guardarPintura()">Guardar pintura</button>
+          <button class="btn-secundari" onclick="netejarFormulari()">Netejar</button>
+        </div>
+      </div>
+
+      <!-- PANELL: GESTIONAR PINTURES -->
+      <div id="panell-pintures" style="display:none;">
+        <h2>Pintures</h2>
+        <div id="spinner-pintures" class="spinner"></div>
+        <table class="taula" id="taula-pintures" style="display:none;">
+          <thead>
+            <tr>
+              <th>Imatge</th>
+              <th>Títol</th>
+              <th>Any</th>
+              <th>Tècnica</th>
+              <th>Accions</th>
+            </tr>
+          </thead>
+          <tbody id="cos-taula-pintures"></tbody>
+        </table>
+      </div>
+
+      <!-- PANELL: USUARIS (només admin) -->
+      <div id="panell-usuaris" style="display:none;">
+        <h2>Usuaris</h2>
+        <div id="spinner-usuaris" class="spinner"></div>
+        <table class="taula" id="taula-usuaris" style="display:none;">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estat</th>
+            </tr>
+          </thead>
+          <tbody id="cos-taula-usuaris"></tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>const supabaseJs = supabase; </script>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    inicialitzarNav();
+    inicialitzarAdmin();
+  </script>
+</body>
+</html>
