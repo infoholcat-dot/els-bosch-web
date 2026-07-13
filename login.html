@@ -17,7 +17,7 @@
   <div class="login-container">
     <div class="login-box">
       <p class="etiqueta">Família Bosch</p>
-      <h1>Accedir.</h1>
+      <h1>Accedir</h1>
       <p>Accés exclusiu per a membres de la família. Inicia sessió amb el teu compte de Google.</p>
 
       <div id="missatge-error" class="missatge-error" style="display:none;"></div>
@@ -40,13 +40,22 @@
     });
 
     async function loginGoogle() {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/index.html' }
-      });
-      if (error) {
-        document.getElementById('missatge-error').style.display = 'block';
-        document.getElementById('missatge-error').textContent = error.message;
+      console.log('loginGoogle cridat');
+      console.log('supabase:', typeof supabase, supabase);
+      console.log('supabase.auth:', typeof supabase?.auth);
+      try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin + '/index.html' }
+        });
+        console.log('signInWithOAuth resultat:', data, error);
+        if (error) {
+          console.error('Error OAuth:', error);
+          document.getElementById('missatge-error').style.display = 'block';
+          document.getElementById('missatge-error').textContent = error.message;
+        }
+      } catch(e) {
+        console.error('Excepció:', e);
       }
     }
   </script>
