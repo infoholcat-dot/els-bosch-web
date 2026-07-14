@@ -3,15 +3,96 @@
 {% block content %}
 <div class="admin-container">
   <h1>Pujar fotos en bulk</h1>
-  <p class="admin-bulk-nota">Selecciona diverses fotos alhora. Es crearan com a obres sense títol definitiu (amb el nom del fitxer) — desprès les pots editar una a una des de la llista.</p>
-  <form method="post" enctype="multipart/form-data" class="admin-form">
-    <label>Imatges
-      <input type="file" name="images" accept="image/*" multiple required />
-    </label>
-    <div class="admin-form-accions">
-      <button type="submit" class="btn-primary">Pujar totes</button>
-      <a href="/admin">Cancel·lar</a>
+
+  <div id="step-select">
+    <p class="admin-bulk-nota">Selecciona diverses fotos. Després podràs retallar el marc de cadascuna, una a una, abans que es pugin.</p>
+    <input type="file" id="file-input" accept="image/*" multiple />
+  </div>
+
+  <div id="step-crop" style="display:none">
+    <p class="admin-bulk-nota">Foto <span id="crop-index"></span> de <span id="crop-total"></span> — retalla el marc i aprova.</p>
+    <div class="crop-zona">
+      <img id="crop-preview" />
     </div>
-  </form>
+    <div class="admin-form-accions">
+      <button type="button" id="btn-aprovar" class="btn-primary">Aprovar i següent</button>
+      <button type="button" id="btn-cancelar" class="btn-secundari">Cancel·lar tot</button>
+    </div>
+  </div>
+
+  <div id="step-uploading" style="display:none">
+    <p class="admin-bulk-nota">Pujant fotos…</p>
+  </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<script>
+(function () {
+  const fileInput = document.getElementById('file-input');
+  const stepSelect = document.getElementById('step-select');
+  const stepCrop = document.getElementById('step-crop');
+  const stepUploading = document.getElementById('step-uploading');
+  const cropPreview = document.getElementById('crop-preview');
+  const cropIndexEl = document.getElementById('crop-index');
+  const cropTotalEl = document.getElementById('crop-total');
+  const btnAprovar = document.getElementById('btn-aprovar');
+  const btnCancelar = document.getElementById('btn-cancelar');
+
+  let files = [];
+  let index = 0;
+  let cropper = null;
+  const croppedBlobs = [];
+
+  fileInput.addEventListener('change', () => {
+    files = Array.from(fileInput.files);
+    if (!files.length) return;
+    index = 0;
+    croppedBlobs.length = 0;
+    cropTotalEl.textContent = files.length;
+    stepSelect.style.display = 'none';
+    stepCrop.style.display = 'block';
+    loadCurrent();
+  });
+
+  function loadCurrent() {
+    cropIndexEl.textContent = index + 1;
+    cropPreview.src = URL.createObjectURL(files[index]);
+    cropPreview.onload = () => {
+      if (cropper) cropper.destroy();
+      cropper = new Cropper(cropPreview, { viewMode: 1, autoCropArea: 1, background: false });
+    };
+  }
+
+  btnAprovar.addEventListener('click', () => {
+    cropper.getCroppedCanvas().toBlob((blob) => {
+      croppedBlobs.push(new File([blob], files[index].name, { type: 'image/jpeg' }));
+      index++;
+      if (index < files.length) {
+        loadCurrent();
+      } else {
+        uploadAll();
+      }
+    }, 'image/jpeg', 0.92);
+  });
+
+  btnCancelar.addEventListener('click', () => {
+    window.location = '/admin';
+  });
+
+  function uploadAll() {
+    if (cropper) { cropper.destroy(); cropper = null; }
+    stepCrop.style.display = 'none';
+    stepUploading.style.display = 'block';
+    const formData = new FormData();
+    croppedBlobs.forEach((blob) => formData.append('images', blob));
+    fetch('/admin/obra/bulk', { method: 'POST', body: formData })
+      .then(() => { window.location = '/admin'; })
+      .catch(() => {
+        alert('Error pujant les fotos. Torna-ho a provar.');
+        window.location = '/admin/obra/bulk';
+      });
+  }
+})();
+</script>
 {% endblock %}

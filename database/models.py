@@ -22,10 +22,11 @@ class User(Base):
 class Painting(Base):
     __tablename__ = "paintings"
     id = Column(Integer, primary_key=True)
-    title = Column(String, nullable=False)
+    title = Column(String)
     year = Column(String)
     technique = Column(String)
     dimensions = Column(String)
+    location = Column(String)
     description = Column(Text)
     image_filename = Column(String)
     created_at = Column(DateTime, server_default=func.now())

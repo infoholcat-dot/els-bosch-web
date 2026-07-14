@@ -23,7 +23,7 @@
         {% endif %}
       </div>
       <div class="galeria-info">
-        <p class="galeria-titol">{{ p.title }}</p>
+        <p class="galeria-titol">{{ p.title or 'Sense títol' }}</p>
         {% if p.year %}<p class="galeria-any">{{ p.year }}</p>{% endif %}
       </div>
     </a>

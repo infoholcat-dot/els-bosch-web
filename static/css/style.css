@@ -42,7 +42,7 @@ nav { background: var(--negre); color: white; padding: 0 2rem; height: 60px; dis
 .galeria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem 2rem; }
 .galeria-item { text-decoration: none; color: inherit; display: block; }
 .galeria-img-wrap { aspect-ratio: 4/3; overflow: hidden; background: var(--gris-clar); margin-bottom: 0.75rem; }
-.galeria-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.galeria-img-wrap img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.4s; }
 .galeria-item:hover img { transform: scale(1.03); }
 .galeria-sense-imatge { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--gris); font-size: 0.8rem; }
 .galeria-titol { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.2rem; }
@@ -83,6 +83,10 @@ nav { background: var(--negre); color: white; padding: 0 2rem; height: 60px; dis
 .admin-form input:focus, .admin-form textarea:focus { outline: none; border-color: var(--negre); }
 .admin-form-accions { display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; }
 .admin-bulk-nota { color: var(--gris); font-size: 0.9rem; max-width: 600px; margin-top: 0.5rem; }
+.crop-zona { max-width: 500px; }
+.crop-zona img { display: block; max-width: 100%; }
+.btn-secundari { background: none; border: 1px solid var(--gris-clar); color: var(--gris); padding: 0.6rem 1.5rem; font-size: 0.85rem; letter-spacing: 0.05em; cursor: pointer; }
+.btn-secundari:hover { border-color: var(--negre); color: var(--negre); }
 .admin-form-accions a { color: var(--gris); text-decoration: none; font-size: 0.85rem; }
 
 @media (max-width: 900px) {
@@ -92,4 +96,13 @@ nav { background: var(--negre); color: white; padding: 0 2rem; height: 60px; dis
 @media (max-width: 600px) {
   .galeria-grid { grid-template-columns: 1fr; }
   .galeria-cap, .galeria-cos { padding: 1.5rem; }
+  .admin-container { padding: 1.5rem 1rem; }
+  .admin-cap { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .admin-cap > div { width: 100%; flex-direction: column !important; }
+  .admin-cap .btn-primary { width: 100%; text-align: center; box-sizing: border-box; }
+  .admin-taula { display: block; overflow-x: auto; white-space: nowrap; }
+  .crop-zona { max-width: 100%; }
+  .admin-form-accions { flex-direction: column; align-items: stretch; }
+  .admin-form-accions .btn-primary, .admin-form-accions .btn-secundari { width: 100%; text-align: center; box-sizing: border-box; }
+  #file-input { width: 100%; }
 }

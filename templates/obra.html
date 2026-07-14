@@ -11,11 +11,12 @@
   </div>
   <div class="obra-info">
     <p class="etiqueta">Col·lecció Pilà Masó</p>
-    <h1>{{ p.title }}</h1>
+    <h1>{{ p.title or 'Sense títol' }}</h1>
     <div class="obra-metadades">
       {% if p.year %}<div class="obra-metadada"><label>Any</label><span>{{ p.year }}</span></div>{% endif %}
       {% if p.technique %}<div class="obra-metadada"><label>Tècnica</label><span>{{ p.technique }}</span></div>{% endif %}
       {% if p.dimensions %}<div class="obra-metadada"><label>Dimensions</label><span>{{ p.dimensions }}</span></div>{% endif %}
+      {% if p.location %}<div class="obra-metadada"><label>Ubicació</label><span>{{ p.location }}</span></div>{% endif %}
     </div>
     {% if p.description %}<p class="obra-descripcio">{{ p.description }}</p>{% endif %}
     {% if user.get('role') in ['admin', 'editor'] %}

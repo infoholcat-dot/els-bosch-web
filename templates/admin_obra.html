@@ -2,10 +2,10 @@
 {% block title %}{% if p %}Editar{% else %}Nova obra{% endif %} · Els Bosch{% endblock %}
 {% block content %}
 <div class="admin-container">
-  <h1>{% if p %}Editar: {{ p.title }}{% else %}Nova obra{% endif %}</h1>
-  <form method="post" enctype="multipart/form-data" class="admin-form">
-    <label>Títol *
-      <input type="text" name="title" value="{{ p.title if p else '' }}" required />
+  <h1>{% if p %}Editar: {{ p.title or 'Sense títol' }}{% else %}Nova obra{% endif %}</h1>
+  <form method="post" enctype="multipart/form-data" class="admin-form" id="obra-form">
+    <label>Títol
+      <input type="text" name="title" value="{{ p.title if p else '' }}" placeholder="opcional" />
     </label>
     <label>Any
       <input type="text" name="year" value="{{ p.year if p else '' }}" placeholder="ex: 1975" />
@@ -16,19 +16,77 @@
     <label>Dimensions
       <input type="text" name="dimensions" value="{{ p.dimensions if p else '' }}" placeholder="ex: 50×70 cm" />
     </label>
+    <label>Ubicació
+      <input type="text" name="location" value="{{ p.location if p else '' }}" placeholder="on es troba la pintura" />
+    </label>
     <label>Descripció
       <textarea name="description" rows="5">{{ p.description if p else '' }}</textarea>
     </label>
     <label>Imatge
-      {% if p and p.image_filename %}
-      <img src="/static/images/{{ p.image_filename }}" style="max-height:150px;display:block;margin-bottom:0.5rem" />
-      {% endif %}
-      <input type="file" name="image" accept="image/*" />
+      <input type="file" name="image" accept="image/*" id="image-input" />
     </label>
+    <div class="crop-zona" id="crop-zona" style="display:none">
+      <p class="admin-bulk-nota">Arrossega les vores per retallar el marc i deixar només la pintura.</p>
+      <img id="crop-preview" src="{% if p and p.image_filename %}/static/images/{{ p.image_filename }}{% endif %}" />
+      <button type="button" id="crop-reset" class="btn-nav" style="margin-top:0.5rem">Desfer retall</button>
+    </div>
     <div class="admin-form-accions">
       <button type="submit" class="btn-primary">Desar</button>
       <a href="/admin">Cancel·lar</a>
     </div>
   </form>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<script>
+(function () {
+  const imageInput = document.getElementById('image-input');
+  const cropZona = document.getElementById('crop-zona');
+  const cropPreview = document.getElementById('crop-preview');
+  const cropResetBtn = document.getElementById('crop-reset');
+  const form = document.getElementById('obra-form');
+  let cropper = null;
+  let cropDirty = false;
+
+  function startCropper() {
+    if (cropper) { cropper.destroy(); }
+    cropper = new Cropper(cropPreview, {
+      viewMode: 1,
+      autoCropArea: 1,
+      background: false,
+      crop() { cropDirty = true; }
+    });
+  }
+
+  if (cropPreview.getAttribute('src')) {
+    cropZona.style.display = 'block';
+    if (cropPreview.complete) { startCropper(); } else { cropPreview.onload = startCropper; }
+  }
+
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    if (!file) return;
+    cropZona.style.display = 'block';
+    cropPreview.src = URL.createObjectURL(file);
+    cropPreview.onload = () => { startCropper(); cropDirty = true; };
+  });
+
+  cropResetBtn.addEventListener('click', () => {
+    if (cropper) { cropper.reset(); cropDirty = false; }
+  });
+
+  form.addEventListener('submit', function (e) {
+    if (!cropper || !cropDirty) return;
+    e.preventDefault();
+    cropper.getCroppedCanvas().toBlob((blob) => {
+      const dt = new DataTransfer();
+      const originalName = (imageInput.files[0] && imageInput.files[0].name) || 'retall.jpg';
+      dt.items.add(new File([blob], originalName, { type: 'image/jpeg' }));
+      imageInput.files = dt.files;
+      form.submit();
+    }, 'image/jpeg', 0.92);
+  });
+})();
+</script>
 {% endblock %}

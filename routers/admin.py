@@ -38,8 +38,7 @@ async def bulk_upload(request: Request, db: AsyncSession = Depends(get_db),
         filename = f"{uuid.uuid4().hex}{ext}"
         with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
             shutil.copyfileobj(image.file, f)
-        title = os.path.splitext(image.filename)[0] or "Sense títol"
-        p = Painting(title=title, image_filename=filename)
+        p = Painting(image_filename=filename)
         db.add(p)
     await db.commit()
     return RedirectResponse("/admin", status_code=302)
@@ -51,8 +50,8 @@ async def nova_obra_form(request: Request):
 
 @router.post("/admin/obra/nova")
 async def nova_obra(request: Request, db: AsyncSession = Depends(get_db),
-    title: str = Form(...), year: str = Form(""), technique: str = Form(""),
-    dimensions: str = Form(""), description: str = Form(""),
+    title: str = Form(""), year: str = Form(""), technique: str = Form(""),
+    dimensions: str = Form(""), location: str = Form(""), description: str = Form(""),
     image: UploadFile = File(None)):
     user = require_editor(request)
     filename = None
@@ -61,8 +60,8 @@ async def nova_obra(request: Request, db: AsyncSession = Depends(get_db),
         filename = f"{uuid.uuid4().hex}{ext}"
         with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
             shutil.copyfileobj(image.file, f)
-    p = Painting(title=title, year=year or None, technique=technique or None,
-                 dimensions=dimensions or None, description=description or None,
+    p = Painting(title=title or None, year=year or None, technique=technique or None,
+                 dimensions=dimensions or None, location=location or None, description=description or None,
                  image_filename=filename)
     db.add(p)
     await db.commit()
@@ -79,18 +78,19 @@ async def editar_obra_form(request: Request, id: int, db: AsyncSession = Depends
 
 @router.post("/admin/obra/{id}/editar")
 async def editar_obra(request: Request, id: int, db: AsyncSession = Depends(get_db),
-    title: str = Form(...), year: str = Form(""), technique: str = Form(""),
-    dimensions: str = Form(""), description: str = Form(""),
+    title: str = Form(""), year: str = Form(""), technique: str = Form(""),
+    dimensions: str = Form(""), location: str = Form(""), description: str = Form(""),
     image: UploadFile = File(None)):
     user = require_editor(request)
     result = await db.execute(select(Painting).where(Painting.id == id))
     p = result.scalar_one_or_none()
     if not p:
         return RedirectResponse("/admin", status_code=302)
-    p.title = title
+    p.title = title or None
     p.year = year or None
     p.technique = technique or None
     p.dimensions = dimensions or None
+    p.location = location or None
     p.description = description or None
     if image and image.filename:
         ext = os.path.splitext(image.filename)[1].lower()

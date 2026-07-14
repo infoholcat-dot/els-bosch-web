@@ -17,7 +17,7 @@
     {% for p in paintings %}
     <tr>
       <td>{% if p.image_filename %}<img src="/static/images/{{ p.image_filename }}" style="height:50px;width:50px;object-fit:cover" />{% endif %}</td>
-      <td>{{ p.title }}</td>
+      <td>{{ p.title or 'Sense títol' }}</td>
       <td>{{ p.year or '' }}</td>
       <td>{{ p.technique or '' }}</td>
       <td>
