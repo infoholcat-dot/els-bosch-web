@@ -5,22 +5,22 @@
   <h1>{% if p %}Editar: {{ p.title or 'Sense títol' }}{% else %}Nova obra{% endif %}</h1>
   <form method="post" enctype="multipart/form-data" class="admin-form" id="obra-form">
     <label>Títol
-      <input type="text" name="title" value="{{ p.title if p else '' }}" placeholder="opcional" />
+      <input type="text" name="title" value="{{ (p.title or '') if p else '' }}" placeholder="opcional" />
     </label>
     <label>Any
-      <input type="text" name="year" value="{{ p.year if p else '' }}" placeholder="ex: 1975" />
+      <input type="text" name="year" value="{{ (p.year or '') if p else '' }}" placeholder="ex: 1975" />
     </label>
     <label>Tècnica
-      <input type="text" name="technique" value="{{ p.technique if p else '' }}" placeholder="ex: Oli sobre tela" />
+      <input type="text" name="technique" value="{{ (p.technique or '') if p else '' }}" placeholder="ex: Oli sobre tela" />
     </label>
     <label>Dimensions
-      <input type="text" name="dimensions" value="{{ p.dimensions if p else '' }}" placeholder="ex: 50×70 cm" />
+      <input type="text" name="dimensions" value="{{ (p.dimensions or '') if p else '' }}" placeholder="ex: 50×70 cm" />
     </label>
     <label>Ubicació
-      <input type="text" name="location" value="{{ p.location if p else '' }}" placeholder="on es troba la pintura" />
+      <input type="text" name="location" value="{{ (p.location or '') if p else '' }}" placeholder="on es troba la pintura" />
     </label>
     <label>Descripció
-      <textarea name="description" rows="5">{{ p.description if p else '' }}</textarea>
+      <textarea name="description" rows="5">{{ (p.description or '') if p else '' }}</textarea>
     </label>
     <label>Imatge
       <input type="file" name="image" accept="image/*" id="image-input" />
