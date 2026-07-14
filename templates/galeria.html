@@ -14,7 +14,7 @@
   {% if paintings %}
   <div class="galeria-grid" id="galeria-grid">
     {% for p in paintings %}
-    <a class="galeria-item" href="/obra/{{ p.id }}" data-w="{{ p.image_width or 4 }}" data-h="{{ p.image_height or 3 }}">
+    <a class="galeria-item" href="/obra/{{ p.id }}">
       <div class="galeria-img-wrap">
         {% if p.image_filename %}
         <img src="/static/images/{{ p.image_filename }}" alt="{{ p.title }}" loading="lazy" />
@@ -36,56 +36,19 @@
 
 <script>
 (function () {
-  const container = document.getElementById('galeria-grid');
-  if (!container) return;
-  const items = Array.from(container.querySelectorAll('.galeria-item'));
-  if (!items.length) return;
-  const gap = 16;
-
-  function targetHeight() {
-    return window.innerWidth < 700 ? 170 : 260;
-  }
-
-  function layout() {
-    const containerWidth = container.clientWidth;
-    const th = targetHeight();
-    let row = [];
-    let ratioSum = 0;
-
-    function flush(isLast) {
-      if (!row.length) return;
-      const gapsWidth = gap * (row.length - 1);
-      const availableWidth = containerWidth - gapsWidth;
-      let rowHeight = availableWidth / ratioSum;
-      if (isLast && rowHeight > th * 1.4) rowHeight = th;
-      row.forEach((it) => {
-        const w = Math.round(rowHeight * it.ratio);
-        it.el.style.width = w + 'px';
-        const wrap = it.el.querySelector('.galeria-img-wrap');
-        if (wrap) wrap.style.height = Math.round(rowHeight) + 'px';
-      });
-      row = [];
-      ratioSum = 0;
+  document.querySelectorAll('#galeria-grid .galeria-item').forEach((item) => {
+    const img = item.querySelector('img');
+    if (!img) return;
+    function classifica() {
+      if (!img.naturalWidth || !img.naturalHeight) return;
+      const ratio = img.naturalWidth / img.naturalHeight;
+      if (ratio > 3) item.classList.add('mosaic-molt-ample');
+      else if (ratio > 1.7) item.classList.add('mosaic-ample');
+      else if (ratio < 0.33) item.classList.add('mosaic-molt-alt');
+      else if (ratio < 0.6) item.classList.add('mosaic-alt');
     }
-
-    items.forEach((el) => {
-      const w = parseFloat(el.dataset.w) || 4;
-      const h = parseFloat(el.dataset.h) || 3;
-      const ratio = w / h;
-      row.push({ el, ratio });
-      ratioSum += ratio;
-      const projected = th * ratioSum + gap * (row.length - 1);
-      if (projected >= containerWidth) flush(false);
-    });
-    flush(true);
-  }
-
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(layout, 150);
+    if (img.complete) classifica(); else img.addEventListener('load', classifica);
   });
-  layout();
 })();
 </script>
 {% endblock %}
