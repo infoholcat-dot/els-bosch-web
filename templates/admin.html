@@ -4,7 +4,10 @@
 <div class="admin-container">
   <div class="admin-cap">
     <h1>Administració</h1>
-    <a href="/admin/obra/nova" class="btn-primary">+ Nova obra</a>
+    <div style="display:flex;gap:0.75rem">
+      <a href="/admin/obra/nova" class="btn-primary">+ Nova obra</a>
+      <a href="/admin/obra/bulk" class="btn-primary">+ Pujar fotos en bulk</a>
+    </div>
   </div>
 
   <h2>Obres ({{ paintings|length }})</h2>

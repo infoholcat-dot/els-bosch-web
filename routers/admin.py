@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Request, Depends, UploadFile, File, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -20,6 +21,28 @@ async def admin_galeria(request: Request, db: AsyncSession = Depends(get_db)):
     users_result = await db.execute(select(User).order_by(User.created_at))
     users = users_result.scalars().all() if user.get("role") == "admin" else []
     return templates.TemplateResponse("admin.html", {"request": request, "user": user, "paintings": paintings, "users": users})
+
+@router.get("/admin/obra/bulk")
+async def bulk_upload_form(request: Request):
+    user = require_editor(request)
+    return templates.TemplateResponse("admin_obra_bulk.html", {"request": request, "user": user})
+
+@router.post("/admin/obra/bulk")
+async def bulk_upload(request: Request, db: AsyncSession = Depends(get_db),
+    images: List[UploadFile] = File(...)):
+    user = require_editor(request)
+    for image in images:
+        if not image.filename:
+            continue
+        ext = os.path.splitext(image.filename)[1].lower()
+        filename = f"{uuid.uuid4().hex}{ext}"
+        with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
+            shutil.copyfileobj(image.file, f)
+        title = os.path.splitext(image.filename)[0] or "Sense títol"
+        p = Painting(title=title, image_filename=filename)
+        db.add(p)
+    await db.commit()
+    return RedirectResponse("/admin", status_code=302)
 
 @router.get("/admin/obra/nova")
 async def nova_obra_form(request: Request):

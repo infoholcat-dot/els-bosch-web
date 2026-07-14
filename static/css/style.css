@@ -82,6 +82,7 @@ nav { background: var(--negre); color: white; padding: 0 2rem; height: 60px; dis
 .admin-form input, .admin-form textarea, .admin-form select { padding: 0.7rem 0.9rem; border: 1px solid var(--gris-clar); font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--negre); width: 100%; }
 .admin-form input:focus, .admin-form textarea:focus { outline: none; border-color: var(--negre); }
 .admin-form-accions { display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; }
+.admin-bulk-nota { color: var(--gris); font-size: 0.9rem; max-width: 600px; margin-top: 0.5rem; }
 .admin-form-accions a { color: var(--gris); text-decoration: none; font-size: 0.85rem; }
 
 @media (max-width: 900px) {

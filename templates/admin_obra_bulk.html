@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Pujar fotos · Els Bosch{% endblock %}
+{% block content %}
+<div class="admin-container">
+  <h1>Pujar fotos en bulk</h1>
+  <p class="admin-bulk-nota">Selecciona diverses fotos alhora. Es crearan com a obres sense títol definitiu (amb el nom del fitxer) — desprès les pots editar una a una des de la llista.</p>
+  <form method="post" enctype="multipart/form-data" class="admin-form">
+    <label>Imatges
+      <input type="file" name="images" accept="image/*" multiple required />
+    </label>
+    <div class="admin-form-accions">
+      <button type="submit" class="btn-primary">Pujar totes</button>
+      <a href="/admin">Cancel·lar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
