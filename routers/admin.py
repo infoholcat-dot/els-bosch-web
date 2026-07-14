@@ -7,11 +7,22 @@ from sqlalchemy import select
 from database.db import get_db
 from database.models import Painting, User, UserRole
 from routers.auth import get_current_user, require_editor, require_admin
+from PIL import Image
 import uuid, os, shutil
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 IMAGES_DIR = "/dsv/els-bosch/static/images"
+
+def save_image(image: UploadFile) -> tuple:
+    ext = os.path.splitext(image.filename)[1].lower()
+    filename = f"{uuid.uuid4().hex}{ext}"
+    path = os.path.join(IMAGES_DIR, filename)
+    with open(path, "wb") as f:
+        shutil.copyfileobj(image.file, f)
+    with Image.open(path) as img:
+        width, height = img.size
+    return filename, width, height
 
 @router.get("/admin")
 async def admin_galeria(request: Request, db: AsyncSession = Depends(get_db)):
@@ -34,11 +45,8 @@ async def bulk_upload(request: Request, db: AsyncSession = Depends(get_db),
     for image in images:
         if not image.filename:
             continue
-        ext = os.path.splitext(image.filename)[1].lower()
-        filename = f"{uuid.uuid4().hex}{ext}"
-        with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
-            shutil.copyfileobj(image.file, f)
-        p = Painting(image_filename=filename)
+        filename, width, height = save_image(image)
+        p = Painting(image_filename=filename, image_width=width, image_height=height)
         db.add(p)
     await db.commit()
     return RedirectResponse("/admin", status_code=302)
@@ -54,15 +62,12 @@ async def nova_obra(request: Request, db: AsyncSession = Depends(get_db),
     dimensions: str = Form(""), location: str = Form(""), description: str = Form(""),
     image: UploadFile = File(None)):
     user = require_editor(request)
-    filename = None
+    filename, width, height = (None, None, None)
     if image and image.filename:
-        ext = os.path.splitext(image.filename)[1].lower()
-        filename = f"{uuid.uuid4().hex}{ext}"
-        with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
-            shutil.copyfileobj(image.file, f)
+        filename, width, height = save_image(image)
     p = Painting(title=title or None, year=year or None, technique=technique or None,
                  dimensions=dimensions or None, location=location or None, description=description or None,
-                 image_filename=filename)
+                 image_filename=filename, image_width=width, image_height=height)
     db.add(p)
     await db.commit()
     return RedirectResponse("/admin", status_code=302)
@@ -93,11 +98,10 @@ async def editar_obra(request: Request, id: int, db: AsyncSession = Depends(get_
     p.location = location or None
     p.description = description or None
     if image and image.filename:
-        ext = os.path.splitext(image.filename)[1].lower()
-        filename = f"{uuid.uuid4().hex}{ext}"
-        with open(os.path.join(IMAGES_DIR, filename), "wb") as f:
-            shutil.copyfileobj(image.file, f)
+        filename, width, height = save_image(image)
         p.image_filename = filename
+        p.image_width = width
+        p.image_height = height
     await db.commit()
     return RedirectResponse("/admin", status_code=302)
 
