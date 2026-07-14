@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Els Bosch{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/">Els Bosch</a>
+    <ul class="nav-links">
+      <li><a href="/">Col·lecció Pilà Masó</a></li>
+    </ul>
+    <div class="nav-dreta">
+      {% if user %}
+        {% if user.get('avatar') %}<img class="nav-user-img" src="{{ user.get('avatar') }}" alt="" />{% endif %}
+        <span class="nav-user-nom">{{ user.get('name', '').split(' ')[0] }}</span>
+        {% if user.get('role') in ['admin', 'editor'] %}
+          <a href="/admin" class="btn-nav">Admin</a>
+        {% endif %}
+        <a href="/logout" class="btn-nav">Sortir</a>
+      {% endif %}
+    </div>
+  </nav>
+  {% block content %}{% endblock %}
+</body>
+</html>

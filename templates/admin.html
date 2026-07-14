@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Admin · Els Bosch{% endblock %}
+{% block content %}
+<div class="admin-container">
+  <div class="admin-cap">
+    <h1>Administració</h1>
+    <a href="/admin/obra/nova" class="btn-primary">+ Nova obra</a>
+  </div>
+
+  <h2>Obres ({{ paintings|length }})</h2>
+  <table class="admin-taula">
+    <thead><tr><th>Imatge</th><th>Títol</th><th>Any</th><th>Tècnica</th><th>Accions</th></tr></thead>
+    <tbody>
+    {% for p in paintings %}
+    <tr>
+      <td>{% if p.image_filename %}<img src="/static/images/{{ p.image_filename }}" style="height:50px;width:50px;object-fit:cover" />{% endif %}</td>
+      <td>{{ p.title }}</td>
+      <td>{{ p.year or '' }}</td>
+      <td>{{ p.technique or '' }}</td>
+      <td>
+        <a href="/admin/obra/{{ p.id }}/editar">Editar</a>
+        {% if user.get('role') == 'admin' %}
+        <form method="post" action="/admin/obra/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('Eliminar?')">
+          <button type="submit" class="btn-eliminar">Eliminar</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if user.get('role') == 'admin' and users %}
+  <h2 style="margin-top:3rem">Usuaris</h2>
+  <table class="admin-taula">
+    <thead><tr><th>Nom</th><th>Email</th><th>Rol</th><th>Actiu</th><th>Accions</th></tr></thead>
+    <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.name or '' }}</td>
+      <td>{{ u.email }}</td>
+      <td>
+        <form method="post" action="/admin/usuari/{{ u.id }}/rol" style="display:inline">
+          <select name="role" onchange="this.form.submit()">
+            <option value="viewer" {% if u.role.value == 'viewer' %}selected{% endif %}>Viewer</option>
+            <option value="editor" {% if u.role.value == 'editor' %}selected{% endif %}>Editor</option>
+            <option value="admin" {% if u.role.value == 'admin' %}selected{% endif %}>Admin</option>
+          </select>
+        </form>
+      </td>
+      <td>{{ 'Sí' if u.active else 'No' }}</td>
+      <td>
+        {% if not u.active %}
+        <form method="post" action="/admin/usuari/{{ u.id }}/aprovar" style="display:inline">
+          <button type="submit" class="btn-primary">Aprovar</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

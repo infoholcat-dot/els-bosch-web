@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ p.title }} · Els Bosch{% endblock %}
+{% block content %}
+<div class="obra-container">
+  <div class="obra-imatge-zona">
+    {% if p.image_filename %}
+    <img id="obra-img" src="/static/images/{{ p.image_filename }}" alt="{{ p.title }}" />
+    {% else %}
+    <div class="galeria-sense-imatge" style="height:400px">Sense imatge</div>
+    {% endif %}
+  </div>
+  <div class="obra-info">
+    <p class="etiqueta">Col·lecció Pilà Masó</p>
+    <h1>{{ p.title }}</h1>
+    <div class="obra-metadades">
+      {% if p.year %}<div class="obra-metadada"><label>Any</label><span>{{ p.year }}</span></div>{% endif %}
+      {% if p.technique %}<div class="obra-metadada"><label>Tècnica</label><span>{{ p.technique }}</span></div>{% endif %}
+      {% if p.dimensions %}<div class="obra-metadada"><label>Dimensions</label><span>{{ p.dimensions }}</span></div>{% endif %}
+    </div>
+    {% if p.description %}<p class="obra-descripcio">{{ p.description }}</p>{% endif %}
+    {% if user.get('role') in ['admin', 'editor'] %}
+    <div style="margin-top:1.5rem">
+      <a href="/admin/obra/{{ p.id }}/editar" class="btn-editar">Editar obra</a>
+    </div>
+    {% endif %}
+    <div class="obra-nav">
+      {% if prev_id %}<a href="/obra/{{ prev_id }}">← Anterior</a>{% else %}<span></span>{% endif %}
+      <a href="/">Tornar a la col·lecció</a>
+      {% if next_id %}<a href="/obra/{{ next_id }}">Següent →</a>{% else %}<span></span>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

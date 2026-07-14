@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Col·lecció Pilà Masó · Els Bosch{% endblock %}
+{% block content %}
+<div class="galeria-cap">
+  <div class="galeria-cap-top">
+    <div>
+      <h1>Col·lecció Pilà Masó</h1>
+      <p class="subtitol">Pintures originals · 1940–2000</p>
+    </div>
+    <span class="galeria-recompte">{{ paintings|length }} obres</span>
+  </div>
+</div>
+<div class="galeria-cos">
+  {% if paintings %}
+  <div class="galeria-grid">
+    {% for p in paintings %}
+    <a class="galeria-item" href="/obra/{{ p.id }}">
+      <div class="galeria-img-wrap">
+        {% if p.image_filename %}
+        <img src="/static/images/{{ p.image_filename }}" alt="{{ p.title }}" loading="lazy" />
+        {% else %}
+        <div class="galeria-sense-imatge">Sense imatge</div>
+        {% endif %}
+      </div>
+      <div class="galeria-info">
+        <p class="galeria-titol">{{ p.title }}</p>
+        {% if p.year %}<p class="galeria-any">{{ p.year }}</p>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="buit">Encara no hi ha obres. <a href="/admin/obra/nova">Afegeix-ne una.</a></p>
+  {% endif %}
+</div>
+{% endblock %}
